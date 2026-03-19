@@ -1,0 +1,50 @@
+---
+title: "Natural Language to MongoDB Queries: How I Built It"
+excerpt: "A deep dive into building an NLP-to-query pipeline using LangChain and Gemini that lets non-technical users query a MongoDB database in plain English."
+date: "2024-09-22"
+tags: ["AI", "MongoDB", "LangChain", "NLP", "Backend"]
+draft: true
+---
+
+> This post is being written. The outline and key topics are below — full content coming soon.
+
+## The problem
+
+Non-technical users in a business should be able to ask questions about their data without knowing MongoDB query syntax. Questions like:
+
+- *"Show me all customers who haven't paid in the last 30 days"*
+- *"Which product sold the most last quarter?"*
+- *"List all orders above ₹50,000 from Mumbai"*
+
+And get real answers — not a dashboard they have to navigate.
+
+## The approach
+
+I built a pipeline that:
+
+1. Takes a plain English question as input
+2. Sends it to Gemini with the MongoDB schema as context
+3. Gets back a structured query (aggregation pipeline or find query)
+4. Validates the query for safety before execution
+5. Runs the query and formats the result in plain English
+
+## The stack
+
+- **LangChain** — orchestration and prompt chaining
+- **Gemini** — natural language to query conversion
+- **MongoDB** — data store
+- **NestJS** — API layer
+- **Schema introspection** — dynamic schema passed to the model as context
+
+## Key topics
+
+1. Schema-aware prompting (passing collection structure to the LLM)
+2. Handling ambiguous queries (asking for clarification vs guessing)
+3. Query validation before execution (preventing destructive queries)
+4. Formatting results back in plain English
+5. Handling aggregation pipelines vs simple find queries
+6. Fallback when the LLM returns invalid MongoDB syntax
+
+## Coming soon
+
+Full walkthrough with prompt templates, validation code, and real examples.

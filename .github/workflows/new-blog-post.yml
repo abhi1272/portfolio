@@ -1,0 +1,138 @@
+name: "✍️ New Blog Post"
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Post title"
+        required: true
+        type: string
+
+      excerpt:
+        description: "One-line summary (shown in listings and SEO)"
+        required: true
+        type: string
+
+      tags:
+        description: "Comma-separated tags  e.g.  AI, NestJS, AWS"
+        required: false
+        default: "AI, Engineering"
+        type: string
+
+      content:
+        description: "Post body in Markdown. Use \\n for line breaks."
+        required: true
+        type: string
+
+      draft:
+        description: "Publish immediately? (false = live, true = draft)"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  create-post:
+    name: Create & Deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate slug + date
+        id: meta
+        run: |
+          TITLE="${{ github.event.inputs.title }}"
+          SLUG=$(echo "$TITLE" \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9 -]//g' \
+            | tr ' ' '-' \
+            | sed 's/--*/-/g; s/^-//; s/-$//')
+          DATE=$(date +%Y-%m-%d)
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+          echo "date=$DATE"  >> $GITHUB_OUTPUT
+
+      - name: Write MDX file
+        env:
+          POST_TITLE:   "${{ github.event.inputs.title }}"
+          POST_EXCERPT: "${{ github.event.inputs.excerpt }}"
+          POST_TAGS:    "${{ github.event.inputs.tags }}"
+          POST_CONTENT: "${{ github.event.inputs.content }}"
+          POST_DRAFT:   "${{ github.event.inputs.draft }}"
+          POST_SLUG:    "${{ steps.meta.outputs.slug }}"
+          POST_DATE:    "${{ steps.meta.outputs.date }}"
+        run: |
+          python3 << 'PYEOF'
+          import os, sys
+
+          title   = os.environ["POST_TITLE"]
+          excerpt = os.environ["POST_EXCERPT"]
+          tags    = os.environ["POST_TAGS"]
+          content = os.environ["POST_CONTENT"].replace("\\n", "\n")
+          draft   = os.environ["POST_DRAFT"]
+          slug    = os.environ["POST_SLUG"]
+          date    = os.environ["POST_DATE"]
+
+          # Format tags as YAML array
+          tag_list  = [t.strip().strip('"') for t in tags.split(",")]
+          tags_yaml = '["' + '", "'.join(tag_list) + '"]'
+
+          filepath = f"content/blog/{slug}.mdx"
+
+          if os.path.exists(filepath):
+              print(f"ERROR: {filepath} already exists. Choose a different title.")
+              sys.exit(1)
+
+          os.makedirs("content/blog", exist_ok=True)
+
+          mdx = f"""---
+          title: "{title}"
+          excerpt: "{excerpt}"
+          date: "{date}"
+          tags: {tags_yaml}
+          draft: {draft}
+          ---
+
+          {content}
+          """
+
+          # Dedent (strip leading spaces from heredoc indentation)
+          import textwrap
+          mdx = textwrap.dedent(mdx).lstrip("\n")
+
+          with open(filepath, "w") as f:
+              f.write(mdx)
+
+          print(f"Created: {filepath}")
+          PYEOF
+
+      - name: Commit and push to main
+        run: |
+          SLUG="${{ steps.meta.outputs.slug }}"
+          TITLE="${{ github.event.inputs.title }}"
+
+          git config user.name  "Abhishek Kumar"
+          git config user.email "abhishek.omex@gmail.com"
+          git add "content/blog/${SLUG}.mdx"
+          git commit -m "post: ${TITLE}"
+          git push origin main
+
+      - name: Summary
+        run: |
+          SLUG="${{ steps.meta.outputs.slug }}"
+          DRAFT="${{ github.event.inputs.draft }}"
+          echo "## ✅ Blog post published!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Title:** ${{ github.event.inputs.title }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Slug:** \`${SLUG}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Draft:** ${DRAFT}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Vercel is deploying — live at \`/blog/${SLUG}\` in ~30 seconds." >> $GITHUB_STEP_SUMMARY

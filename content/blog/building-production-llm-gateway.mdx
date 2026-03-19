@@ -1,0 +1,42 @@
+---
+title: "Building a Production LLM Gateway: Routing, Guardrails & Observability"
+excerpt: "How I built a self-hosted AI gateway that routes across GPT-4, Claude, and Gemini — with full cost tracking, content moderation, and trace-level observability using LiteLLM and Langfuse."
+date: "2024-11-10"
+tags: ["AI", "LLM", "LiteLLM", "Langfuse", "Infrastructure"]
+draft: true
+---
+
+> This post is being written. The outline and key topics are below — full content coming soon.
+
+## What this post covers
+
+When you start using LLMs in production, you quickly hit the same problems:
+
+- You're locked to one provider — if OpenAI has downtime, everything breaks
+- You have no visibility into what's being sent to the model or what it costs
+- There's nothing stopping bad input or hallucinated output from reaching users
+- Every team that wants to use AI has to figure out the same auth, retry, and error handling themselves
+
+This post is about how I solved all of that by building a centralized LLM gateway.
+
+## The stack
+
+- **LiteLLM** — unified API layer across OpenAI, Claude, Gemini
+- **Langfuse** — observability: traces, cost, latency per request
+- **NestJS** — gateway API server
+- **Docker** — containerized deployment
+- **Custom guardrails** — input/output validation before and after model calls
+
+## Key topics
+
+1. Why you need a gateway (not just direct API calls)
+2. Setting up LiteLLM for multi-model routing
+3. Wiring Langfuse for trace-level observability
+4. Building input guardrails (PII detection, prompt injection checks)
+5. Output moderation (content filtering, hallucination checks)
+6. Cost dashboards and per-team usage tracking
+7. Fallback strategies when a model is down
+
+## Coming soon
+
+Full implementation guide with code samples. If you're building something similar, [reach out](mailto:abhishek.omex@gmail.com) — happy to discuss.

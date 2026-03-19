@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-slate-900 antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  ::selection {
+    @apply bg-indigo-100 text-indigo-900;
+  }
+}
+
+@layer components {
+  .container-main {
+    @apply max-w-5xl mx-auto px-6 sm:px-8;
+  }
+
+  .section-padding {
+    @apply py-20 sm:py-28;
+  }
+
+  .heading-xl {
+    @apply text-4xl sm:text-5xl font-bold tracking-tight text-slate-900;
+  }
+
+  .heading-lg {
+    @apply text-3xl sm:text-4xl font-bold tracking-tight text-slate-900;
+  }
+
+  .heading-md {
+    @apply text-xl sm:text-2xl font-semibold text-slate-900;
+  }
+
+  .text-body {
+    @apply text-slate-600 leading-relaxed;
+  }
+
+  .link-accent {
+    @apply text-indigo-600 hover:text-indigo-700 transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-700 transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:border-slate-300 hover:bg-slate-50 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white border border-slate-100 rounded-2xl p-6 hover:border-slate-200 hover:shadow-sm transition-all duration-200;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600;
+  }
+
+  .tag-accent {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-600;
+  }
+}
+
+/* Scroll fade-up animation */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,50 @@
+---
+title: "LiteLLM + Langfuse: My Stack for AI Cost & Quality Control"
+excerpt: "Running LLMs in production gets expensive fast. Here's the observability and routing stack I use to monitor costs, catch quality regressions, and keep AI features reliable."
+date: "2024-08-05"
+tags: ["AI", "LiteLLM", "Langfuse", "DevOps", "Cost Optimization"]
+draft: true
+---
+
+> This post is being written. The outline and key topics are below — full content coming soon.
+
+## Why this matters
+
+Once you start using LLMs in production, two things happen fast:
+
+1. **The bill gets unpredictable.** You don't know which features are expensive until you're staring at a surprise invoice.
+2. **Quality drifts without you knowing.** Model updates, prompt changes, or edge cases cause silent regressions.
+
+LiteLLM + Langfuse solves both.
+
+## LiteLLM — one API, many models
+
+LiteLLM gives you a single API interface for OpenAI, Anthropic Claude, Google Gemini, Mistral, and 100+ others. You call one endpoint, and LiteLLM handles:
+
+- Provider routing
+- Fallbacks (if GPT-4 is down, fall back to Claude)
+- Rate limiting
+- Per-model cost tracking
+
+## Langfuse — observability for every LLM call
+
+Langfuse traces every prompt and completion with:
+
+- Full input/output logging
+- Token usage and cost per call
+- Latency breakdowns
+- Per-user and per-feature grouping
+- Eval scores (you can attach human or automated quality scores)
+
+## Key topics
+
+1. Setting up LiteLLM as a self-hosted proxy
+2. Connecting Langfuse for automatic tracing
+3. Tagging traces by feature, user, and environment
+4. Setting cost alerts and budgets per model
+5. Running evals on production traffic
+6. Dashboard setup for non-technical stakeholders
+
+## Coming soon
+
+Full setup guide with Docker Compose, environment config, and real cost dashboards.

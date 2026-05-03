@@ -1,0 +1,78 @@
+---
+title: "RAG, LLM-Wiki, or GBrain? Which Knowledge Architecture Your Agent Needs"
+date: 2026-05-03
+tags: [AI, RAG, LLM-Wiki, GBrain, Knowledge, Agents]
+author: Abhishek Kumar
+summary: "RAG scales, LLM-Wiki compounds knowledge, and GBrain/fat-skills act. Here’s how to pick — and how to combine them for a practical agent."
+---
+
+We used to think the hard part of AI was model quality. Today the hard part is memory.
+
+Throw a trillion tokens at an LLM and it still "forgets" between conversations. Recent work — from Andrej Karpathy's LLM-Wiki idea to Garry Tan's GBrain — shows why: retrieval, compounding, and autonomous action are different problems that need different architectures. Picking the right one (or combining them) is what turns a helpful assistant into an agent that actually improves and acts for you.
+
+## What each architecture solves
+
+### 1) RAG — the scalable retriever
+
+- **Key idea:** embed your documents into vectors and retrieve relevant chunks at query time.
+- **Strength:** scales to tens or hundreds of thousands of docs; freshness is trivial (re-embed changed docs); it's auditable and production-ready.
+- **Tradeoff:** it never "learns" between queries and can suffer from chunking — important context may be split across vectors.
+
+**When to pick RAG:** you have large, frequently changing corpora and need a fast, auditable assistant.
+
+### 2) LLM-Wiki — the compounding compiler
+
+- **Key idea:** the model reads sources once and writes a persistent, interlinked markdown wiki that it maintains and updates.
+- **Strength:** knowledge compounds. Syntheses and cross-references accumulate, so the system gets measurably smarter over time.
+- **Tradeoff:** higher upfront compute and maintenance. Best for hundreds (not hundreds of thousands) of high-value sources.
+
+**When to pick LLM-Wiki:** you need deep domain expertise, research dossiers, or a knowledge base that improves with use (great for writing blogs).
+
+### 3) GBrain / Fat Skills — the operator
+
+- **Key idea:** intelligence and workflows live in "fat" skill documents and a thin harness executes them (including croned jobs and always-on detectors).
+- **Strength:** the agent doesn’t just know — it acts. It can enrich entity pages, monitor signals, file reports, and send alerts while you sleep.
+- **Tradeoff:** engineering overhead and governance. Skills mutate state and require tests, idempotency, and audit logs. GBrain is currently optimized for a power-user setup.
+
+**When to pick Fat Skills:** you want autonomous monitoring or repeated workflows (e.g., portfolio signals, scheduled digests).
+
+## The practical hybrid — Retrieve -> Compile -> Act
+
+These patterns are complementary:
+- Use RAG for broad retrieval and freshness.
+- Use an LLM-Wiki for high-value pages where compounding matters.
+- Use Fat Skills to run scheduled enrichments, signal detectors, and to write back into the wiki.
+
+## For traders (how to map this to your portfolio)
+
+- **RAG:** fast lookups across filings, broker docs, and news.
+- **LLM-Wiki:** persistent company dossiers (dividends, corporate actions, rules like LICI/LICI-style constraints).
+- **Fat Skills:** cron jobs that monitor price moves, earnings calendars, and corporate actions; they write alerts to the wiki and notify you (Telegram/email).
+
+## Can we use GBrain for our wiki?
+
+Short answer: yes — as the automation/operator layer.
+
+**How I'd integrate GBrain:**
+- Store the wiki as a git-backed Obsidian vault (markdown) or Postgres + pgvector.
+- Use pgvector for a RAG layer (fast retrieval).
+- Run GBrain fat skills to:
+  - Enrich entity pages (people, companies).
+  - Run signal-detectors (news / price triggers).
+  - File audit reports and digests into reports/{job}/{timestamp}.md.
+- Add a periodic LLM-Wiki compile job for high-value pages so syntheses compound.
+
+**Caveats:**
+- GBrain is opinionated and needs engineering to adapt for multi-user teams.
+- Skills mutate state — add tests, idempotency, and auditing.
+- For enterprise scale, combine with a retrieval layer for speed.
+
+## Next steps I can take for you
+- Push the blog to your repo (done).
+- Create the repo structure I recommend:
+  - /content/posts/ for blog posts
+  - /wiki/ as the Obsidian vault
+  - /gbrain/skills/ skeleton with one starter skill: signal-detector.md
+- Implement a pilot GBrain skill (signal-detector) that watches news and writes an entity update + Telegram alert.
+
+If you want the content tweaked to be more personal (add a trading anecdote, portfolio example, or links to your rules), tell me what to add and I’ll update the post and amend the commit.
